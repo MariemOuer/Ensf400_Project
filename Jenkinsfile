@@ -1,12 +1,12 @@
 pipeline {
-    agent {
-        docker { image 'python:2-alpine' }
-    }
+    agent any
+
     stages {
-        stage('Build') { 
+        stage('Test Jenkins Setup') {
             steps {
-                sh 'python -m py_compile sources/add2vals.py sources/calc.py' 
-                stash(name: 'compiled-results', includes: 'sources/*.py*') 
+                echo ' Jenkins is working and connected to GitHub!'
+                sh 'python --version || echo "Python not installed"'  
+                sh 'ls -l'  
             }
         }
     }
