@@ -1,15 +1,13 @@
-# Use Python 3.11 as the base image
-FROM python:3.11
-
-WORKDIR /app
-
-# Copy project files into the container
-COPY . /app
-
-# Install dependencies using python3.11
-RUN python3.11 -m pip install --no-cache-dir -r requirements.txt
-
-EXPOSE 5000
-
-CMD ["python3", "app.py"]
-  # Make sure this matches your script
+FROM jenkins/jenkins:2.492.3-jdk17
+USER root
+RUN apt-get update && apt-get install -y lsb-release ca-certificates curl && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc && \
+    chmod a+r /etc/apt/keyrings/docker.asc && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
+    https://download.docker.com/linux/debian $(. /etc/os-release && echo \"$VERSION_CODENAME\") stable" \
+    | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update && apt-get install -y docker-ce-cli && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+USER jenkins
+RUN jenkins-plugin-cli --plugins "blueocean docker-workflow"
